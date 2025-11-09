@@ -1,18 +1,26 @@
 import React from 'react'
 import { Outlet } from 'react-router'
+import { SidebarComponent } from '@syncfusion/ej2-react-navigations'
+import { MobileSidebar, Navitems } from 'components'
 
- 
 const admin_layout = () => {
   return (
     <div className='admin-layout'>
-      AdminLayout
+      
+      <MobileSidebar />
+
       <aside className='w-full max-w-[270px] hidden lg:block'>
-        Sidebar
+        <SidebarComponent width={270} enableGestures={false}>
+
+          <Navitems />
+
+        </SidebarComponent>
       </aside>
 
       <aside className='children'>
-        <Outlet/>
+        <Outlet />
       </aside>
+
     </div>
   )
 }

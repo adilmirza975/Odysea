@@ -277,12 +277,12 @@
     }
   }
   .link-logo {
-    @apply flex items-center gap-1.5 py-10 border-b border-light-100;
+    @apply flex items-center gap-1.5 py-10 border-b border-light-100 ;
     h1 {
       @apply text-base md:text-2xl font-bold text-dark-100;
     }
   }
-  .nav-footer {
+  .nav-footer { 
     @apply flex items-center gap-2.5 pb-8;
     img {
       @apply size-10 rounded-full aspect-square;
@@ -318,7 +318,7 @@
       }
     }
     aside {
-      @apply flex gap-4 items-center;
+      @apply flex gap-4 items-center ;
       img {
         @apply size-10 rounded-full aspect-square;
       }
@@ -506,8 +506,11 @@ body {
   padding-bottom: 18px !important;
 }
 
+
+/* sidebar left mac screen */
 .e-sidebar.e-left {
   border-right: 1px solid #ecf2ef;
+  padding: 20px;
 }
 .e-btn,
 .e-css.e-btn {

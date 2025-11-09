@@ -11,7 +11,7 @@ export const sidebarItems = [
     id: 3,
     icon: "/assets/icons/users.svg",
     label: "All Users",
-    href: "/all-users",
+    href: "/all_users",
   },
   {
     id: 4,
