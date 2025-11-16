@@ -20,7 +20,7 @@ export const appwriteConfig = {
 
 const client  = new Client()
   .setEndpoint(appwriteConfig.endpointUrl)
-  .setEndpoint(appwriteConfig.projectId)
+  .setProject(appwriteConfig.projectId)
 
 const account = new Account(client);
 
