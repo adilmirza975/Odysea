@@ -57,10 +57,10 @@ Odysea is an intelligent travel planning platform that harnesses the power of Go
 
 ## 📌 Live Services
 
-| Layer | Platform | Link                                                 |
-| ----- | -------- | ---------------------------------------------------- |
-| Web   | Vercel   | https://odysea-web.vercel.app/dashboard/destinations |
-| API   | Railway  | https://odysea-production.up.railway.app/            |
+| Layer | Platform | Link                                          |
+| ----- | -------- | ----------------------------------------------|
+| Web   | Vercel   | https://odysea-web.vercel.app/                |
+| API   | Railway  | https://odysea-production.up.railway.app/     |
 
 <a id="repository-structure"></a>
 
