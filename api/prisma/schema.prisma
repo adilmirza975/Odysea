@@ -1,0 +1,123 @@
+// Prisma schema for Odysea Travel Agency
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  password      String?  // Optional for OAuth users
+  name          String
+  avatar        String?
+  googleId      String?  @unique
+  authProvider  String   @default("local") // "local" or "google"
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  trips         Trip[]
+  savedDestinations SavedDestination[]
+}
+
+model SavedDestination {
+  id          String   @id @default(cuid())
+  name        String
+  country     String
+  description String?
+  imageUrl    String?
+  notes       String?
+  priority    Priority @default(MEDIUM)
+  bestSeason  String?
+  estimatedBudget Float?
+  tags        String[] @default([])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model Trip {
+  id              String        @id @default(cuid())
+  title           String
+  description     String?
+  destination     String
+  country         String
+  startDate       DateTime
+  endDate         DateTime
+  budget          Budget
+  travelGroup     TravelGroup
+  status          TripStatus    @default(UPCOMING)
+  totalEstimate   Float?
+  coverImage      String?
+  images          String[]      @default([])
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  userId          String
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  itineraryDays   ItineraryDay[]
+}
+
+model ItineraryDay {
+  id          String     @id @default(cuid())
+  dayNumber   Int
+  date        DateTime
+  title       String
+  description String?
+  tripId      String
+  trip        Trip       @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  activities  Activity[]
+}
+
+model Activity {
+  id              String           @id @default(cuid())
+  title           String
+  description     String?
+  startTime       String?
+  endTime         String?
+  location        String?
+  estimatedCost   Float?
+  category        ActivityCategory
+  order           Int              @default(0)
+  itineraryDayId  String
+  itineraryDay    ItineraryDay     @relation(fields: [itineraryDayId], references: [id], onDelete: Cascade)
+}
+
+enum Budget {
+  MID_RANGE
+  LUXURY
+  PREMIUM
+}
+
+enum TravelGroup {
+  SOLO
+  COUPLE
+  FRIENDS
+  FAMILY
+}
+
+enum TripStatus {
+  UPCOMING
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+enum ActivityCategory {
+  TRANSPORT
+  ACCOMMODATION
+  FOOD
+  SIGHTSEEING
+  ACTIVITY
+  SHOPPING
+  OTHER
+}
