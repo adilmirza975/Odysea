@@ -22,7 +22,7 @@ export const authMiddleware = (
   }
 
   const token = authHeader.split(" ")[1];
-  const payload = verifyToken(token);
+  const payload = verifyToken(token!);
 
   if (!payload) {
     res.status(401).json({ error: "Unauthorized: Invalid token" });
