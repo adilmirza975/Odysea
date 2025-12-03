@@ -4,8 +4,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "start": "bun src/index.ts",
-    "build": "tsc",
+    "start": "bun dist/index.js",
+    "build": "tsc && tsc-alias",
     "dev": "bun --hot src/index.ts",
     "db:generate": "bunx prisma generate",
     "db:push": "bunx prisma db push",
@@ -34,6 +34,7 @@
     "google-auth-library": "^10.5.0",
     "jsonwebtoken": "^9.0.2",
     "prisma": "^7.0.1",
+    "tsc-alias": "^1.8.16",
     "zod": "^4.1.13"
   }
 }
