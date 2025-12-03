@@ -77,12 +77,13 @@ export default function DestinationsPage() {
   const [priorityFilter, setPriorityFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-  
+
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingDestination, setEditingDestination] = useState<Destination | null>(null);
+  const [editingDestination, setEditingDestination] =
+    useState<Destination | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   // Form state
   const [formData, setFormData] = useState({
     name: "",
@@ -105,7 +106,7 @@ export default function DestinationsPage() {
     try {
       const response = await api.getDestinations({
         page,
-        limit: 12,
+        limit: 3,
         search: searchQuery || undefined,
         priority: priorityFilter !== "all" ? priorityFilter : undefined,
         sortBy,
@@ -165,8 +166,15 @@ export default function DestinationsPage() {
         notes: formData.notes || undefined,
         priority: formData.priority,
         bestSeason: formData.bestSeason || undefined,
-        estimatedBudget: formData.estimatedBudget ? parseFloat(formData.estimatedBudget) : undefined,
-        tags: formData.tags ? formData.tags.split(",").map(t => t.trim()).filter(Boolean) : [],
+        estimatedBudget: formData.estimatedBudget
+          ? parseFloat(formData.estimatedBudget)
+          : undefined,
+        tags: formData.tags
+          ? formData.tags
+              .split(",")
+              .map((t) => t.trim())
+              .filter(Boolean)
+          : [],
       };
 
       if (editingDestination) {
@@ -185,11 +193,16 @@ export default function DestinationsPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to remove this destination from your wishlist?")) return;
+    if (
+      !confirm(
+        "Are you sure you want to remove this destination from your wishlist?"
+      )
+    )
+      return;
 
     try {
       await api.deleteDestination(id);
-      setDestinations(destinations.filter(d => d.id !== id));
+      setDestinations(destinations.filter((d) => d.id !== id));
     } catch (error) {
       console.error("Failed to delete destination:", error);
     }
@@ -227,7 +240,9 @@ export default function DestinationsPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Saved Destinations</h1>
+            <h1 className="text-3xl font-bold tracking-tight">
+              Saved Destinations
+            </h1>
             <p className="text-muted-foreground">
               Your travel wishlist - places you dream of visiting
             </p>
@@ -279,7 +294,9 @@ export default function DestinationsPage() {
             size="icon"
             onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
           >
-            <ArrowUpDown className={cn("h-4 w-4", sortOrder === "desc" && "rotate-180")} />
+            <ArrowUpDown
+              className={cn("h-4 w-4", sortOrder === "desc" && "rotate-180")}
+            />
           </Button>
         </div>
 
@@ -300,7 +317,9 @@ export default function DestinationsPage() {
           <Card className="text-center py-12">
             <CardContent>
               <Heart className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No destinations saved yet</h3>
+              <h3 className="text-lg font-semibold mb-2">
+                No destinations saved yet
+              </h3>
               <p className="text-muted-foreground mb-4">
                 Start building your travel wishlist!
               </p>
@@ -314,11 +333,17 @@ export default function DestinationsPage() {
           <>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {destinations.map((destination) => (
-                <Card key={destination.id} className="group overflow-hidden hover:shadow-lg transition-shadow">
+                <Card
+                  key={destination.id}
+                  className="group overflow-hidden hover:shadow-lg transition-shadow"
+                >
                   {/* Image */}
                   <div className="relative h-40 overflow-hidden">
                     <img
-                      src={destination.imageUrl || "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=600&fit=crop&q=80"}
+                      src={
+                        destination.imageUrl ||
+                        "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=600&fit=crop&q=80"
+                      }
                       alt={destination.name}
                       className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
                     />
@@ -347,7 +372,9 @@ export default function DestinationsPage() {
                   </div>
 
                   <CardHeader className="pb-2">
-                    <CardTitle className="line-clamp-1">{destination.name}</CardTitle>
+                    <CardTitle className="line-clamp-1">
+                      {destination.name}
+                    </CardTitle>
                     <CardDescription className="flex items-center gap-1">
                       <Globe className="h-3 w-3" />
                       {destination.country}
@@ -379,7 +406,11 @@ export default function DestinationsPage() {
                     {destination.tags.length > 0 && (
                       <div className="flex flex-wrap gap-1">
                         {destination.tags.slice(0, 3).map((tag) => (
-                          <Badge key={tag} variant="outline" className="text-xs">
+                          <Badge
+                            key={tag}
+                            variant="outline"
+                            className="text-xs"
+                          >
                             {tag}
                           </Badge>
                         ))}
@@ -397,19 +428,76 @@ export default function DestinationsPage() {
 
             {/* Pagination */}
             {pagination && pagination.totalPages > 1 && (
-              <div className="flex justify-center gap-2 mt-6">
+              <div className="flex justify-center items-center gap-1 mt-6">
                 <Button
                   variant="outline"
+                  size="sm"
                   disabled={pagination.page <= 1}
                   onClick={() => loadDestinations(pagination.page - 1)}
                 >
                   Previous
                 </Button>
-                <span className="flex items-center px-4 text-sm text-muted-foreground">
-                  Page {pagination.page} of {pagination.totalPages}
-                </span>
+
+                {/* Page numbers */}
+                {(() => {
+                  const pages: (number | string)[] = [];
+                  const currentPage = pagination.page;
+                  const totalPages = pagination.totalPages;
+
+                  // Always show first page
+                  pages.push(1);
+
+                  // Add ellipsis after first page if needed
+                  if (currentPage > 3) {
+                    pages.push("...");
+                  }
+
+                  // Add pages around current page
+                  for (
+                    let i = Math.max(2, currentPage - 1);
+                    i <= Math.min(totalPages - 1, currentPage + 1);
+                    i++
+                  ) {
+                    if (!pages.includes(i)) {
+                      pages.push(i);
+                    }
+                  }
+
+                  // Add ellipsis before last page if needed
+                  if (currentPage < totalPages - 2) {
+                    pages.push("...");
+                  }
+
+                  // Always show last page if more than 1 page
+                  if (totalPages > 1 && !pages.includes(totalPages)) {
+                    pages.push(totalPages);
+                  }
+
+                  return pages.map((page, index) =>
+                    typeof page === "string" ? (
+                      <span
+                        key={`ellipsis-${index}`}
+                        className="px-2 text-muted-foreground"
+                      >
+                        {page}
+                      </span>
+                    ) : (
+                      <Button
+                        key={page}
+                        variant={page === currentPage ? "default" : "outline"}
+                        size="sm"
+                        className="min-w-[36px]"
+                        onClick={() => loadDestinations(page)}
+                      >
+                        {page}
+                      </Button>
+                    )
+                  );
+                })()}
+
                 <Button
                   variant="outline"
+                  size="sm"
                   disabled={pagination.page >= pagination.totalPages}
                   onClick={() => loadDestinations(pagination.page + 1)}
                 >
@@ -423,14 +511,23 @@ export default function DestinationsPage() {
         {/* Create/Edit Modal */}
         {isModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center">
-            <div className="fixed inset-0 bg-black/50" onClick={() => setIsModalOpen(false)} />
+            <div
+              className="fixed inset-0 bg-black/50"
+              onClick={() => setIsModalOpen(false)}
+            />
             <Card className="relative z-10 w-full max-w-lg max-h-[90vh] overflow-y-auto m-4">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle>
-                    {editingDestination ? "Edit Destination" : "Add New Destination"}
+                    {editingDestination
+                      ? "Edit Destination"
+                      : "Add New Destination"}
                   </CardTitle>
-                  <Button variant="ghost" size="icon" onClick={() => setIsModalOpen(false)}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsModalOpen(false)}
+                  >
                     <X className="h-4 w-4" />
                   </Button>
                 </div>
@@ -449,7 +546,9 @@ export default function DestinationsPage() {
                         id="name"
                         placeholder="e.g., Paris"
                         value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, name: e.target.value })
+                        }
                         required
                       />
                     </div>
@@ -459,7 +558,9 @@ export default function DestinationsPage() {
                         id="country"
                         placeholder="e.g., France"
                         value={formData.country}
-                        onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, country: e.target.value })
+                        }
                         required
                       />
                     </div>
@@ -471,7 +572,12 @@ export default function DestinationsPage() {
                       id="description"
                       placeholder="Why do you want to visit this place?"
                       value={formData.description}
-                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          description: e.target.value,
+                        })
+                      }
                       rows={3}
                     />
                   </div>
@@ -501,20 +607,32 @@ export default function DestinationsPage() {
                         id="bestSeason"
                         placeholder="e.g., Spring, Summer"
                         value={formData.bestSeason}
-                        onChange={(e) => setFormData({ ...formData, bestSeason: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            bestSeason: e.target.value,
+                          })
+                        }
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="estimatedBudget">Estimated Budget ($)</Label>
+                      <Label htmlFor="estimatedBudget">
+                        Estimated Budget ($)
+                      </Label>
                       <Input
                         id="estimatedBudget"
                         type="number"
                         placeholder="e.g., 3000"
                         value={formData.estimatedBudget}
-                        onChange={(e) => setFormData({ ...formData, estimatedBudget: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            estimatedBudget: e.target.value,
+                          })
+                        }
                       />
                     </div>
                     <div className="space-y-2">
@@ -523,7 +641,9 @@ export default function DestinationsPage() {
                         id="tags"
                         placeholder="e.g., beach, culture, food"
                         value={formData.tags}
-                        onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, tags: e.target.value })
+                        }
                       />
                     </div>
                   </div>
@@ -535,7 +655,9 @@ export default function DestinationsPage() {
                       type="url"
                       placeholder="https://example.com/image.jpg"
                       value={formData.imageUrl}
-                      onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, imageUrl: e.target.value })
+                      }
                     />
                     <p className="text-xs text-muted-foreground">
                       Leave empty to auto-generate from Unsplash
@@ -548,18 +670,26 @@ export default function DestinationsPage() {
                       id="notes"
                       placeholder="Any additional notes about this destination..."
                       value={formData.notes}
-                      onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, notes: e.target.value })
+                      }
                       rows={2}
                     />
                   </div>
                 </CardContent>
 
                 <div className="flex justify-end gap-2 p-6 pt-0">
-                  <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsModalOpen(false)}
+                  >
                     Cancel
                   </Button>
                   <Button type="submit" disabled={isSubmitting}>
-                    {isSubmitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                    {isSubmitting && (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    )}
                     {editingDestination ? "Update" : "Add"} Destination
                   </Button>
                 </div>
